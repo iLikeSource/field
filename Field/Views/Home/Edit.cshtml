@@ -1,0 +1,59 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="~/Scripts/jquery-2.0.3.min.js"></script>
+<script>
+    function updatePreview(isAsync) {
+        var text = $('#editing-pane').val();
+        var url = '@Url.Action("Preview")';
+        $.ajax({
+            url: "Preview",
+            type: 'POST',
+            //contentType: "application/json; charset=utf-8",
+            //dataType: 'json',
+            data: text,
+            async: isAsync,
+            success: function (result) {
+                $('#preview-pane').html(result);
+            },
+            error: function (XMLHttpRequest, textStatus, error) {
+                $('#preview-pane').html('<strong>内部エラー</strong>');
+            }
+        });
+    }
+
+    function updatePreviewSync() {
+        updatePreview(false);
+    }
+
+    $(function () {
+        $.ajaxSetup({ cache: false });
+        setInterval(
+            function () {
+                updatePreview(true);
+            },
+            1000
+        )
+    });
+</script>
+
+<div class="jumbotron">
+    <h1>NOTE</h1>
+</div>
+<div class="row">
+    <div class="col-xs-4">
+        <input id="update-btn" class="form-control btn btn-default" rows="50" cols="40" type="button" value="更新" onclick="updatePreviewSync();"/>
+    </div>
+    <div class="col-xs-8">
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-4">
+        <textarea id="editing-pane" class="form-control" rows="50" cols="40" placeholder="ここに内容を記載してください"></textarea>
+    </div>
+    <div id="preview-pane" class="col-xs-8">
+        <strong>ここに表示</strong>
+    </div>
+</div>
